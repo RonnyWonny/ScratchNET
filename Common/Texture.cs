@@ -1,32 +1,15 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
-using StbImageSharp;
-using System.Drawing;
 
 namespace ScratchNET.Common;
 
 public unsafe class Texture
 {
     int Handle;
-    //public ImageResult? Image { get; private set; }
 
     public int width;
     public int height;
-
-    //public static Texture LoadFromStream(Stream stream)
-    //{
-    //    ImageResult newImage = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
-    //    Texture texture = new Texture()
-    //    {
-    //        Image = newImage,
-    //    };
-
-    //    texture.Use();
-
-    //    GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, newImage.Width, newImage.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, newImage.Data);
-    //    return texture;
-    //}
 
     public static Texture LoadFromImage(Image<Rgba32> image)
     {
@@ -55,7 +38,7 @@ public unsafe class Texture
 
     private void SetPramas()
     {
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
 
         GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
