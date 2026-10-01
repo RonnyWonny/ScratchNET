@@ -34,7 +34,7 @@ public class WindowProgram : GameWindow {
         ClientSize = new Vector2i(scratch.Settings.Width, scratch.Settings.height);
         CenterWindow();
 
-        ErrorType status = scratch.Open("C:/Users/antho/Downloads/test.sb3");
+        ErrorType status = scratch.Open("./test.sb3");
 
         if (status != ErrorType.OK)
             Console.WriteLine($"ERROR TYPE: {status}");
@@ -71,7 +71,6 @@ public class WindowProgram : GameWindow {
     protected override void OnFramebufferResize(FramebufferResizeEventArgs e)
     {
         base.OnFramebufferResize(e);
-
         GL.Viewport(0, 0, e.Width, e.Height);
     }
 }
