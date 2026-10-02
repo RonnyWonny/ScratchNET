@@ -1,6 +1,8 @@
-﻿namespace Scratch;
+﻿using Scratch.Interface;
 
-public partial class Sprite
+namespace Scratch;
+
+public partial class Sprite : IScratchSprite
 {
     public string Name = "Sprite";
     
@@ -10,9 +12,9 @@ public partial class Sprite
     public float X = 0;
     public float Y = 0;
     
-    public double Size = 100;
+    public float Size = 100;
 
-    public double Direction = 90;
+    public float Direction = 90;
     public string RotationStyle = "";
 
     public bool Visible = true;
@@ -53,7 +55,7 @@ public partial class Sprite
         CurrentCostume = index;
     }
 
-    public virtual void ReadBlocks()
+    public void ReadBlock(string id)
     {
 
     }
@@ -62,4 +64,11 @@ public partial class Sprite
     {
         return $"Sprite(Name: {Name}, X: {X}, Y: {Y}, Size: {Size}, Visible: {Visible})";
     }
+
+    public void AddBlock(string id, BlockData blockData)
+    {
+        Blocks.blocks[id] = blockData;
+    }
+
+    public Blocks GetBlocks() => Blocks;
 }

@@ -2,13 +2,15 @@
 
 public class Blocks
 {
-    public List<Block> blocks = [];
-    public int StepI { get; private set; } = 0;
-    public Block CurrentBlock { get =>  blocks[StepI]; }
+    public Dictionary<string, BlockData> blocks = [];
 
-    public void Step()
+    public Dictionary<string, BlockData> FilterBlocksByGroup(string group)
     {
-        StepI++;
-        CurrentBlock.Call([]);
+        return blocks.Where(x => x.Value.opcode?.Split("_")[0] == group).ToDictionary();
+    }
+
+    public BlockData? GetBlock(string id)
+    {
+        return blocks.ContainsKey(id) ? blocks[id] : null;
     }
 }

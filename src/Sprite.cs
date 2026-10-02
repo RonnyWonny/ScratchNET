@@ -43,7 +43,11 @@ public class Sprite(float x = 0, float y = 0) : Scratch.Sprite(x, y)
         float xPos = X + (float)WindowProgram.Instance.scratch.CenterX - texture.width / 2f;
         float yPos = (float)WindowProgram.Instance.scratch.CenterY - texture.height / 2f - Y;
 
-        Mesh.Translate = Matrix4.CreateScale(texture.width, texture.height, 1f) * Matrix4.CreateTranslation((float)xPos, (float)yPos, 0f);
+        Mesh.Translate = Matrix4.CreateScale(texture.width, texture.height, 1f)
+            * Matrix4.CreateTranslation(-texture.width / 2f, -texture.height / 2f, 0f)
+            * Matrix4.CreateRotationZ(ScratchMath.DegreeToRadian(Direction - 90))
+            * Matrix4.CreateTranslation((float)xPos + texture.width / 2f, (float)yPos + texture.height / 2f, 0f);
+
         texture.Use(TextureUnit.Texture0);
 
         Mesh.Draw();

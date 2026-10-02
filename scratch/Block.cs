@@ -1,32 +1,24 @@
-﻿using System;
+﻿using Scratch.Events;
+using Scratch.Interface;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Scratch;
 
-public enum BlockType
+public class BlocksGroup(BlockManager blockManager)
 {
-    Hat=0,
-    Block=1,
-    Operator=2,
-    C=3
-}
+    protected readonly BlockManager BlockManager = blockManager;
 
-public class Block
-{
-    public BlockType Type;
-
-    public string Opcode = string.Empty;
-
-    public Block? Parent;
-    public Block? Next;
-
-    public bool ScreenRefresh = true;
-
-    public List<object> Inputs = [];
-
-    public virtual object? Call(Dictionary<string, object> args)
+    public virtual Dictionary<string, Action<BlockCallEvent>> GetPrimitives()
     {
-        return null;
+        return [];
+    }
+
+
+    protected void CallBlock(IScratchSprite sprite, BlockData? block)
+    {
+        if (block == null) return;
+        BlockManager.CallblockFromSprite(sprite, block);
     }
 }

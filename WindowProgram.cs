@@ -8,7 +8,7 @@ using Scratch;
 namespace ScratchNET;
 
 public class WindowProgram : GameWindow {
-    public static WindowProgram Instance;
+    public static WindowProgram? Instance;
 
     public ScratchNet scratch;
 
@@ -39,13 +39,15 @@ public class WindowProgram : GameWindow {
         if (status != ErrorType.OK)
             Console.WriteLine($"ERROR TYPE: {status}");
 
-        
+        scratch.Start();
+
     }
 
     protected override void OnLoad()
     {
         IsVisible = true;
         base.OnLoad();
+
 
         GL.Enable(EnableCap.Blend);
         GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);

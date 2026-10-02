@@ -15,10 +15,7 @@ public class ScratchNet : Scratch.Scratch
         sprite.Visible = target.visible;
         sprite.RotationStyle = target.rotationStyle;
 
-        AddSpriteAssetsByTarget(sprite, target);
-
-        sprite.SetCostume(target.currentCostume);
-
+        SetupSprite(sprite, target);
         Sprites.Add(sprite);
     }
 

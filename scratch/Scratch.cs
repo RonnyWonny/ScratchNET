@@ -1,4 +1,5 @@
-﻿using SixLabors.ImageSharp;
+﻿using Scratch.Interface;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using Svg;
@@ -22,12 +23,21 @@ public class ScratchTarget
     public int currentCostume { get; set; }
     public float x { get; set; }
     public float y { get; set; }
-    public double size { get; set; }
-    public double direction { get; set; } = 90;
+    public float size { get; set; }
+    public float direction { get; set; } = 90;
     public bool visible { get; set; } = true;
     public int layerOrder { get; set; }
     public string rotationStyle { get; set; } = "";
-    public JsonElement blocks { get; set; }
+    public Dictionary<string, BlockJson> blocks { get; set; } = [];
+}
+
+public class BlockJson
+{
+    public string? opcode { get; set; }
+    public string? next { get; set; }
+    public string? parent { get; set; }
+    public Dictionary<string, JsonElement> fields { get; set; } = [];
+    public Dictionary<string, List<JsonElement>> inputs { get; set; } = [];
 }
 
 public class CostumeJson
@@ -38,6 +48,16 @@ public class CostumeJson
     public double bitmapResolution { get; set; }
     public double rotationCenterX { get; set; }
     public double rotationCenterY { get; set; }
+}
+
+public class BlockData
+{
+    public string? opcode = null;
+    public string? blockName { get => opcode?.Split("_")[1]; }
+    public BlockData? next = null;
+    public BlockData? parent = null;
+    public Dictionary<string, object> fields = [];
+    public Dictionary<string, object> inputs = [];
 }
 
 public enum ErrorType
@@ -62,6 +82,8 @@ public struct ProjectSettings
 
 public class Scratch
 {
+    public BlockManager BlockManager;
+
     public Stage? Stage { get; private set; } = null;
     public List<Sprite> Sprites = [];
 
@@ -78,6 +100,11 @@ public class Scratch
         get => Settings.height / 2f;
     }
 
+    public Scratch()
+    {
+        BlockManager = new BlockManager(this);
+    }
+
     /// <summary>
     /// initialize with a project file
     /// </summary>
@@ -87,6 +114,7 @@ public class Scratch
     {
         using var zip = ZipFile.OpenRead(path);
 
+        // put this into its own function
         foreach (ZipArchiveEntry e in zip.Entries)
         {
             try
@@ -146,7 +174,7 @@ public class Scratch
         return ErrorType.OK;
     }
 
-    protected void AddSpriteAssetsByTarget(Sprite sprite, ScratchTarget target)
+    protected void AddSpriteAssetsByTarget(IScratchSprite sprite, ScratchTarget target)
     {
         foreach (CostumeJson costume in target.costumes)
         {
@@ -164,6 +192,62 @@ public class Scratch
         }
     }
 
+    protected void AssignBlocksToSprite(IScratchSprite sprite, Dictionary<string, BlockJson> blocks)
+    {
+
+        foreach (string id in blocks.Keys)
+        {
+            BlockJson data = blocks[id];
+
+            Dictionary<string, object> inputs = [];
+
+            Console.WriteLine(data.inputs.Count);
+            foreach (string input in data.inputs.Keys)
+            {
+                var value = data.inputs[input][1][1].ToString();
+
+                Console.WriteLine(value);
+                if (float.TryParse(value, out float i))
+                    inputs[input] = i;
+                else if (bool.TryParse(value, out bool b))
+                    inputs[input] = b;
+                else if (value != null)
+                    inputs[input] = value;
+            }
+
+            BlockData block = new BlockData
+            {
+                opcode = data.opcode,
+                inputs = inputs
+            };
+
+            sprite.AddBlock(id, block);
+        }
+
+        Blocks SpriteBlocks = sprite.GetBlocks();
+
+        foreach (string id in blocks.Keys)
+        {
+            BlockJson data = blocks[id];
+
+            if (data.next == null) continue;
+            BlockData? blockData = SpriteBlocks.GetBlock(id);
+            BlockData? nextBlockData = SpriteBlocks.GetBlock(data.next);
+
+            if (blockData == null || nextBlockData == null) continue;
+
+            blockData.next = nextBlockData;
+            nextBlockData.parent = blockData;
+        }
+    }
+
+    protected void SetupSprite(IScratchSprite sprite, ScratchTarget target)
+    {
+        AddSpriteAssetsByTarget(sprite, target);
+        AssignBlocksToSprite(sprite, target.blocks);
+        sprite.SetCostume(target.currentCostume);
+    }
+
     public virtual void AddTarget(ScratchTarget target)
     {
         Sprite sprite = new Sprite()
@@ -178,15 +262,26 @@ public class Scratch
             RotationStyle = target.rotationStyle,
         };
 
-        AddSpriteAssetsByTarget(sprite, target);
-
-        sprite.SetCostume(target.currentCostume);
+        SetupSprite(sprite, target);
         Sprites.Add(sprite);
+    }
+
+    public void Start()
+    {
+        foreach (IScratchSprite spr in Sprites)
+        {
+            Blocks blocks = spr.GetBlocks();
+            foreach (BlockData block in blocks.FilterBlocksByGroup("event").Values)
+            {
+                if (block.blockName != "whenflagclicked") continue;
+                BlockManager.CallblockFromSprite(spr, block);
+            }
+        }
     }
 
     public virtual void Step()
     {
-        foreach (Sprite spr in Sprites)
-            spr.ReadBlocks();
+        //foreach (Sprite spr in Sprites)
+        //    spr.ReadBlocks();
     }
 }
