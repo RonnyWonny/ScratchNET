@@ -15,7 +15,6 @@ public class BlocksGroup(BlockManager blockManager)
         return [];
     }
 
-
     protected void CallBlock(IScratchSprite sprite, BlockData? block)
     {
         if (block == null) return;

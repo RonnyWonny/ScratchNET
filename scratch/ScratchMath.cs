@@ -1,6 +1,4 @@
-﻿
-
-namespace Scratch;
+﻿namespace Scratch;
 
 public static class ScratchMath
 {

@@ -1,5 +1,4 @@
-﻿using Scratch;
-using ScratchNET;
+﻿using ScratchNET;
 
 class Program
 {

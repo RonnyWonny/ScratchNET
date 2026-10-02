@@ -1,5 +1,4 @@
-﻿
-using Scratch;
+﻿using Scratch;
 
 namespace ScratchNET;
 

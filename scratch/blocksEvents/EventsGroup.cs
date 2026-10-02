@@ -18,6 +18,5 @@ public class EventsGroup : BlocksGroup
     {
         Console.WriteLine("CALLED FLAG CLICKED");
         if (e.Sprite == null || e.Next == null) return;
-        CallBlock(e.Sprite, e.Next);
     }
 }

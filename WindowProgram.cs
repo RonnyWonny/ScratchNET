@@ -14,11 +14,11 @@ public class WindowProgram : GameWindow {
 
     public List<Sprite> sprites;
 
-    public WindowProgram(string Title = "project") : base
+    public WindowProgram() : base
         (GameWindowSettings.Default,
         new NativeWindowSettings()
         {
-            Title = Title,
+            Title = "ScratchNET | scratch .NET 10",
             WindowBorder = WindowBorder.Resizable,
             StartVisible = false,
             StartFocused = true,

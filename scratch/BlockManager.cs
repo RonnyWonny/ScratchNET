@@ -8,11 +8,11 @@ public class BlockManager
 {
     public Dictionary<string, Dictionary<string, Action<BlockCallEvent>>> BlockTypes;
 
-    private Scratch scratch;
+    public Scratch Scratch;
 
     public BlockManager(Scratch scratch)
     {
-        this.scratch = scratch;
+        this.Scratch = scratch;
 
         BlockTypes = new Dictionary<string, Dictionary<string, Action<BlockCallEvent>>>()
         {
@@ -44,5 +44,8 @@ public class BlockManager
         };
 
         blockFunction.Invoke(@event);
+
+        if (block.next != null)
+            CallblockFromSprite(sprite, block.next);
     }
 }

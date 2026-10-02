@@ -36,7 +36,7 @@ public class BlockJson
     public string? opcode { get; set; }
     public string? next { get; set; }
     public string? parent { get; set; }
-    public Dictionary<string, JsonElement> fields { get; set; } = [];
+    public Dictionary<string, List<JsonElement>> fields { get; set; } = [];
     public Dictionary<string, List<JsonElement>> inputs { get; set; } = [];
 }
 
@@ -58,6 +58,11 @@ public class BlockData
     public BlockData? parent = null;
     public Dictionary<string, object> fields = [];
     public Dictionary<string, object> inputs = [];
+
+    public override string ToString()
+    {
+        return $"BlockData(opcode: {opcode}, blockName: {blockName}, fields: {{{string.Join(", ", fields.Select(kvp => $"{kvp.Key}: {kvp.Value}"))}}}, inputs: {{{string.Join(", ", inputs.Select(kvp => $"{kvp.Key}: {kvp.Value}"))}}})";
+    }
 }
 
 public enum ErrorType
@@ -66,7 +71,6 @@ public enum ErrorType
     ProjectFailed = 1,
     AssetFailed = 2,
     SpriteFailed = 3
-
 }
 
 public struct ProjectSettings
@@ -200,25 +204,32 @@ public class Scratch
             BlockJson data = blocks[id];
 
             Dictionary<string, object> inputs = [];
+            Dictionary<string, object> fields = [];
 
-            Console.WriteLine(data.inputs.Count);
             foreach (string input in data.inputs.Keys)
             {
-                var value = data.inputs[input][1][1].ToString();
+                var DataInputs = data.inputs[input];
+                var value = DataInputs[1];
 
-                Console.WriteLine(value);
-                if (float.TryParse(value, out float i))
-                    inputs[input] = i;
-                else if (bool.TryParse(value, out bool b))
-                    inputs[input] = b;
-                else if (value != null)
-                    inputs[input] = value;
+                if (value.ValueKind == JsonValueKind.Array)
+                    inputs[input] = TryParseString(value[1]);
+            }
+
+            foreach (string field in data.fields.Keys)
+            {
+                List<object> blockFields = [];
+
+                foreach (JsonElement fieldData in data.fields[field])
+                    blockFields.Add(TryParseString(fieldData));
+
+                fields[field] = blockFields;
             }
 
             BlockData block = new BlockData
             {
                 opcode = data.opcode,
-                inputs = inputs
+                inputs = inputs,
+                fields = fields
             };
 
             sprite.AddBlock(id, block);
@@ -235,6 +246,15 @@ public class Scratch
             BlockData? nextBlockData = SpriteBlocks.GetBlock(data.next);
 
             if (blockData == null || nextBlockData == null) continue;
+
+            foreach (string input in data.inputs.Keys)
+            {
+                var DataInputs = data.inputs[input];
+                var value = DataInputs[1];
+
+                if (value.ValueKind == JsonValueKind.String)
+                    blockData.inputs[input] = SpriteBlocks.GetBlock(value.GetString());
+            }
 
             blockData.next = nextBlockData;
             nextBlockData.parent = blockData;
@@ -279,9 +299,18 @@ public class Scratch
         }
     }
 
+    public static object TryParseString(object value)
+    {
+        if (float.TryParse(value.ToString(), out float i))
+            return i;
+        else if (bool.TryParse(value.ToString(), out bool b))
+            return b;
+        else
+            return value.ToString();
+    }
+
     public virtual void Step()
     {
-        //foreach (Sprite spr in Sprites)
-        //    spr.ReadBlocks();
+        // TO DO
     }
 }
