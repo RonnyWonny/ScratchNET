@@ -1,4 +1,4 @@
-<img alt="Static Badge" src="https://img.shields.io/badge/support_me_on-KOFI-blue?style=flat&logo=kofi&logoColor=54c6ff&logoSize=32&link=https%3A%2F%2Fko-fi.com%2Fronny_wonny">
+<a href="https://ko-fi.com/ronny_wonny"> <img src="https://img.shields.io/badge/support_me_on-KOFI-blue?style=flat&logo=kofi&logoColor=54c6ff&logoSize=32&link=https%3A%2F%2Fko-fi.com%2Fronny_wonny"></a>
 
 
 # scratchNET
