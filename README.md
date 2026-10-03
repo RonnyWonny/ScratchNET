@@ -1,4 +1,5 @@
-![Static Badge](https://img.shields.io/badge/support_me_on-KOFI-blue?style=flat&logo=kofi&logoColor=54c6ff&logoSize=32&link=https%3A%2F%2Fko-fi.com%2Fronny_wonny)
+<img alt="Static Badge" src="https://img.shields.io/badge/support_me_on-KOFI-blue?style=flat&logo=kofi&logoColor=54c6ff&logoSize=32&link=https%3A%2F%2Fko-fi.com%2Fronny_wonny">
+
 
 # scratchNET
 
@@ -44,5 +45,4 @@ dotnet build
 |[Scratch Team](https://scratch.mit.edu/)|Created Scratch|
 |[Six Labors](https://github.com/sixLabors/ImageSharp)|Created ImageSharp|
 |[OpenTK](https://opentk.net/)|Created OpenTK (OpenGL for c#)
-[SVG](https://github.com/svg-net/SVG) | Created SVG support for c#
-|
+[SVG](https://github.com/svg-net/SVG) | Created SVG support for c#|
