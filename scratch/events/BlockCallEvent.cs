@@ -8,7 +8,7 @@ public struct BlockCallEvent(BlockData Block, IScratchSprite sprite)
     public IScratchSprite Sprite { get; set; } = sprite;
 
     public bool IsStage { get; set; } = sprite is Stage;
-
+    public bool SkipNextBlock = false;
     public BlockData Block { get; set; } = Block;
     public BlockData? Parent { get; set; } = Block.parent;
     public BlockData? Next { get; set; } = Block.next;

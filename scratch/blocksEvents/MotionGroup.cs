@@ -42,11 +42,12 @@ public class MotionGroup : BlocksGroup
         {
             BlockData TO = (BlockData)e.Parameters["TO"];
             
+            // make this into a enum perhaps?
             switch (((List<object>)TO.fields["TO"])[0]) {
                 case "_random_":
                     Random random = new Random();
-                    spr.X = random.NextInt64(-BlockManager.Scratch.Settings.Width, BlockManager.Scratch.Settings.Width);
-                    spr.Y = random.NextInt64(-BlockManager.Scratch.Settings.height, BlockManager.Scratch.Settings.height);
+                    spr.X = random.NextInt64(-BlockManager.Scratch.Settings.Width, BlockManager.Scratch.Settings.Width) / 2f;
+                    spr.Y = random.NextInt64(-BlockManager.Scratch.Settings.height, BlockManager.Scratch.Settings.height) / 2f;
                     break;
             }
         }

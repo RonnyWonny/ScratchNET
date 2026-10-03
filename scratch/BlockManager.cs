@@ -45,7 +45,7 @@ public class BlockManager
 
         blockFunction.Invoke(@event);
 
-        if (block.next != null)
+        if (!@event.SkipNextBlock && block.next != null)
             CallblockFromSprite(sprite, block.next);
     }
 }

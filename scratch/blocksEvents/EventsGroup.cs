@@ -16,7 +16,6 @@ public class EventsGroup : BlocksGroup
 
     private void WhenFlagClicked(BlockCallEvent e)
     {
-        Console.WriteLine("CALLED FLAG CLICKED");
         if (e.Sprite == null || e.Next == null) return;
     }
 }
