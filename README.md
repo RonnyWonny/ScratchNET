@@ -40,8 +40,7 @@ dotnet build
 
 | credit | role |
 |--------|------|
-| [Ronny Wonny](https://github.com/
-RonnyWonny) | Created ScratchNET |
+|[Ronny Wonny](https://github.com/RonnyWonny)| Created ScratchNET |
 |[Scratch Team](https://scratch.mit.edu/)|Created Scratch|
 |[Six Labors](https://github.com/sixLabors/ImageSharp)|Created ImageSharp|
 |[OpenTK](https://opentk.net/)|Created OpenTK (OpenGL for c#)
