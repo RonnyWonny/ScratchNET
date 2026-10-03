@@ -1,6 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using System.Runtime.InteropServices;
 
 namespace ScratchNET.Common;
 
@@ -36,7 +37,7 @@ public unsafe class Texture
         SetPramas();
     }
 
-    private void SetPramas()
+    public void SetPramas()
     {
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
@@ -55,12 +56,16 @@ public unsafe class Texture
         Use(TextureUnit.Texture0);
     }
 
-    public void SetData(System.Drawing.Rectangle bounds, byte[] data)
+    public void SetData(int width, int height, byte[] data)
     {
         Use();
-        fixed (byte* ptr = data)
-        {
-            GL.TexSubImage2D(TextureTarget.Texture2D, 0, bounds.Left, bounds.Top, bounds.Right, bounds.Bottom, PixelFormat.Rgba, PixelType.UnsignedByte, data);
-        }
+        GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, width, height, PixelFormat.Rgba, PixelType.UnsignedByte, data);
+
+    }
+
+    public void SetData(int width, int height, Memory<Rgba32> memory)
+    {
+        Use();
+        GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, width, height, PixelFormat.Rgba, PixelType.UnsignedByte, ref MemoryMarshal.GetReference(memory.Span));
     }
 }

@@ -52,7 +52,7 @@ public class WindowProgram : GameWindow {
         GL.Enable(EnableCap.Blend);
         GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
-        GL.ClearColor(Color4.White);
+        GL.ClearColor(Color4.Black);
     }
 
     protected override void OnUpdateFrame(FrameEventArgs args)
@@ -74,5 +74,6 @@ public class WindowProgram : GameWindow {
     {
         base.OnFramebufferResize(e);
         GL.Viewport(0, 0, e.Width, e.Height);
+        scratch.WindowResize(e.Width, e.Height);
     }
 }

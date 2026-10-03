@@ -1,10 +1,8 @@
-﻿using OpenTK.Graphics.OpenGL4;
-using OpenTK.Mathematics;
-using Scratch;
+﻿using Scratch;
 using ScratchNET;
-using ScratchNET.Common;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.Processing;
 
 public class Sprite(float x = 0, float y = 0) : Scratch.Sprite(x, y)
 {
@@ -20,9 +18,9 @@ public class Sprite(float x = 0, float y = 0) : Scratch.Sprite(x, y)
         1, 2, 3
     };
 
-    private Mesh Mesh = new Mesh(Verts, Indices);
+    //private Mesh Mesh = new Mesh(Verts, Indices);
 
-    public Texture? texture;
+    public Image? texture;
 
     public Costume ThisCostume { get => Costumes[CurrentCostume]; }
 
@@ -30,26 +28,18 @@ public class Sprite(float x = 0, float y = 0) : Scratch.Sprite(x, y)
     {
         base.SetCostume(index);
 
-        var image = ScratchCache.GetImage(ThisCostume.AssetId);
+        texture = ScratchCache.GetImage(ThisCostume.AssetId);
 
-        if (image == null) return;
-        texture = Texture.LoadFromImage((Image<Rgba32>)image);
+        //if (image == null) return;
+        //texture = Texture.LoadFromImage((Image<Rgba32>)image);
     }
 
-    public void Draw()
+    public void Draw(DrawingCanvas canvas)
     {
         if (texture == null || !Visible) return;
-
-        float xPos = X + (float)WindowProgram.Instance.scratch.CenterX - texture.width / 2f;
-        float yPos = (float)WindowProgram.Instance.scratch.CenterY - texture.height / 2f - Y;
-
-        Mesh.Translate = Matrix4.CreateScale(texture.width, texture.height, 1f)
-            * Matrix4.CreateTranslation(-texture.width / 2f, -texture.height / 2f, 0f)
-            * Matrix4.CreateRotationZ(ScratchMath.DegreeToRadian(Direction - 90))
-            * Matrix4.CreateTranslation((float)xPos + texture.width / 2f, (float)yPos + texture.height / 2f, 0f);
-
-        texture.Use(TextureUnit.Texture0);
-
-        Mesh.Draw();
+        int xPos = (int)(X + WindowProgram.Instance.scratch.CenterX - texture.Width / 2);
+        int yPos = (int)(WindowProgram.Instance.scratch.CenterY - texture.Height / 2 - Y);
+        
+        canvas.DrawImage(texture, new Rectangle(0, 0, texture.Width, texture.Height), new RectangleF(xPos, yPos, texture.Width, texture.Height), KnownResamplers.NearestNeighbor);
     }
 }
