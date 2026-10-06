@@ -77,7 +77,7 @@ public struct ProjectSettings
 {
     public int Width { get; } = 480;
     public int height { get; } = 360;
-    public double Framerate { get; } = 30;
+    public int Framerate { get; } = 30;
     public long BackgroundColor { get; } = 0xFFFFFF;
     public float Scale = 1f;
 
@@ -92,8 +92,6 @@ public class Scratch
     public List<Sprite> Sprites = [];
 
     public ProjectSettings Settings = new ProjectSettings();
-
-    private List<object> Assets = [];
 
     public float CenterX {
         get => Settings.Width / 2f;
@@ -126,7 +124,7 @@ public class Scratch
                 if (e.Name.EndsWith(".png"))
                 {
                     using Stream ImageStream = e.Open();
-                    Image image = Image.Load<Rgba32>(ImageStream);
+                    Image<Rgba32> image = Image.Load<Rgba32>(ImageStream);
                     image.Mutate(x => x.Resize(image.Width / 2, image.Height / 2));
                     ScratchCache.CacheImage(e.Name, image);
 
@@ -143,7 +141,7 @@ public class Scratch
                         bitmap.Save(ImageStream, ImageFormat.Png);
                         ImageStream.Position = 0;
 
-                        Image image = Image.Load(ImageStream);
+                        Image<Rgba32> image = (Image<Rgba32>)Image.Load(ImageStream);
                         ScratchCache.CacheImage(e.Name, image);
                     }
                 }
@@ -180,6 +178,7 @@ public class Scratch
 
     protected void AddSpriteAssetsByTarget(IScratchSprite sprite, ScratchTarget target)
     {
+        target.costumes.Reverse();
         foreach (CostumeJson costume in target.costumes)
         {
             Costume newCostume = new Costume
@@ -198,7 +197,6 @@ public class Scratch
 
     protected void AssignBlocksToSprite(IScratchSprite sprite, Dictionary<string, BlockJson> blocks)
     {
-
         foreach (string id in blocks.Keys)
         {
             BlockJson data = blocks[id];
@@ -241,11 +239,8 @@ public class Scratch
         {
             BlockJson data = blocks[id];
 
-            if (data.next == null) continue;
             BlockData? blockData = SpriteBlocks.GetBlock(id);
-            BlockData? nextBlockData = SpriteBlocks.GetBlock(data.next);
-
-            if (blockData == null || nextBlockData == null) continue;
+            if (blockData == null) continue;
 
             foreach (string input in data.inputs.Keys)
             {
@@ -256,8 +251,11 @@ public class Scratch
                     blockData.inputs[input] = SpriteBlocks.GetBlock(value.GetString());
             }
 
+            if (data.next == null) continue;
+            BlockData? nextBlockData = SpriteBlocks.GetBlock(data.next);
+
+            nextBlockData?.parent = blockData;
             blockData.next = nextBlockData;
-            nextBlockData.parent = blockData;
         }
     }
 
@@ -270,7 +268,7 @@ public class Scratch
 
     public virtual void AddTarget(ScratchTarget target)
     {
-        Sprite sprite = new Sprite()
+        Sprite sprite = new Sprite(this)
         {
             Name = target.name,
             X = target.x,
@@ -279,7 +277,7 @@ public class Scratch
             Direction = target.direction,
             LayerOrder = target.layerOrder,
             Visible = target.visible,
-            RotationStyle = target.rotationStyle,
+            RotationStyle = DirectionStyle.AllDirection,
         };
 
         SetupSprite(sprite, target);
@@ -312,5 +310,10 @@ public class Scratch
     public virtual void Step()
     {
         // TO DO
+    }
+
+    public override string ToString()
+    {
+        return $"Scratch(SpritesCount: {Sprites.Count})";
     }
 }

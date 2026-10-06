@@ -14,7 +14,7 @@ public class WindowProgram : GameWindow {
 
     public List<Sprite> sprites;
 
-    public WindowProgram() : base
+    public WindowProgram(int ViewportWidth = 0, int ViewportHeight = 0) : base
         (GameWindowSettings.Default,
         new NativeWindowSettings()
         {
@@ -31,7 +31,7 @@ public class WindowProgram : GameWindow {
         Instance = this;
 
         scratch = new ScratchNet();
-        ClientSize = new Vector2i(scratch.Settings.Width, scratch.Settings.height);
+        ClientSize = new Vector2i(ViewportWidth == 0 ? scratch.Settings.Width : ViewportWidth, ViewportHeight == 0 ? scratch.Settings.height : ViewportHeight);
         CenterWindow();
 
         ErrorType status = scratch.Open("./test.sb3");
@@ -52,7 +52,7 @@ public class WindowProgram : GameWindow {
         GL.Enable(EnableCap.Blend);
         GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
-        GL.ClearColor(Color4.Black);
+        GL.ClearColor(Color4.White);
     }
 
     protected override void OnUpdateFrame(FrameEventArgs args)

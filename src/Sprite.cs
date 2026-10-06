@@ -1,10 +1,11 @@
-﻿using Scratch;
+﻿using OpenTK.Mathematics;
+using Scratch;
+using Scratch.ScratchMath;
 using ScratchNET;
-using SixLabors.ImageSharp;
+using ScratchNET.Common;
 using SixLabors.ImageSharp.Drawing.Processing;
-using SixLabors.ImageSharp.Processing;
 
-public class Sprite(float x = 0, float y = 0) : Scratch.Sprite(x, y)
+public class Sprite(ScratchNet scratch, float x = 0, float y = 0) : Scratch.Sprite(scratch, x, y)
 {
     private static readonly float[] Verts = {
         1f,  1f, 0.0f, 1.0f, 1.0f,
@@ -18,9 +19,8 @@ public class Sprite(float x = 0, float y = 0) : Scratch.Sprite(x, y)
         1, 2, 3
     };
 
-    //private Mesh Mesh = new Mesh(Verts, Indices);
-
-    public Image? texture;
+    public Texture? texture;
+    private Mesh Mesh = new Mesh(Verts, Indices);
 
     public Costume ThisCostume { get => Costumes[CurrentCostume]; }
 
@@ -28,18 +28,27 @@ public class Sprite(float x = 0, float y = 0) : Scratch.Sprite(x, y)
     {
         base.SetCostume(index);
 
-        texture = ScratchCache.GetImage(ThisCostume.AssetId);
-
-        //if (image == null) return;
-        //texture = Texture.LoadFromImage((Image<Rgba32>)image);
+        var img = ScratchCache.GetImage(ThisCostume.AssetId);
+        if (img == null) return;
+        texture = Texture.LoadFromImage(img);
     }
 
-    public void Draw(DrawingCanvas canvas)
+    public void Draw()
     {
-        if (texture == null || !Visible) return;
-        int xPos = (int)(X + WindowProgram.Instance.scratch.CenterX - texture.Width / 2);
-        int yPos = (int)(WindowProgram.Instance.scratch.CenterY - texture.Height / 2 - Y);
-        
-        canvas.DrawImage(texture, new Rectangle(0, 0, texture.Width, texture.Height), new RectangleF(xPos, yPos, texture.Width, texture.Height), KnownResamplers.NearestNeighbor);
+        if (texture == null || !Visible || Size <= 0) return;
+        float xPos = X + WindowProgram.Instance.scratch.CenterX - texture.width / 2;
+        float yPos = WindowProgram.Instance.scratch.CenterY - texture.height / 2 - Y;
+
+        float scaleWidth = texture.width * (Size / 100);
+        float scaleHeight = texture.height * (Size / 100);
+
+        Mesh.Translate = Matrix4.CreateScale(scaleWidth, scaleHeight, 1f)
+            * Matrix4.CreateTranslation(-scaleWidth / 2f, -scaleHeight / 2f, 0f)
+            * Matrix4.CreateRotationZ(MathUtil.DegreeToRadian(Direction - 90))
+            * Matrix4.CreateTranslation((float)xPos + scaleWidth / 2f, (float)yPos + scaleHeight / 2f, 0f);
+
+        texture.Use();
+
+        Mesh.Draw();
     }
 }

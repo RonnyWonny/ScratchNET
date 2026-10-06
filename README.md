@@ -9,7 +9,7 @@ The [``scratch``](https://github.com/RonnyWonny/ScratchNET/tree/main/scratch) fo
 You can extend [``Scratch``](https://github.com/RonnyWonny/ScratchNET/blob/main/scratch/Scratch.cs), [``Sprite``](https://github.com/RonnyWonny/ScratchNET/blob/main/scratch/Sprite.cs), [``Stage``](https://github.com/RonnyWonny/ScratchNET/blob/main/scratch/Stage.cs), [``BlocksGroup``](http://github.com/RonnyWonny/ScratchNET/blob/main/scratch/BlocksGroup.cs), and etc depending on what you plan on doing with them. 
 
 ## NOTE
-This project is creat4ed without looking in scratch source code, so some things might not be accurate.
+This project is created with barely looking in scratch source code, so some things might not be accurate.
 
 ## MANUAL BUILDING
 
